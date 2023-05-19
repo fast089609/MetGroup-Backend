@@ -1,9 +1,18 @@
 import { Article } from "../models/Articulos.js";
+import { Store } from "../models/Tiendas.js";
 
 export const index = async (req, res) => {
   try {
+    const {usuario} = req;
     const articles = await Article.findAll({
-      include: "store",
+      include: [
+        {
+          model: Store,
+          where: {
+            userId: usuario
+          }
+        }
+      ],
     });
     res.status(200).send({
       message: "Articulos encontrados correctamente",

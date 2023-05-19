@@ -2,7 +2,12 @@ import { Store } from "../models/Tiendas.js";
 
 export const index = async (req, res) => {
   try {
-    const stores = await Store.findAll();
+    const {usuario} = req;
+    const stores = await Store.findAll({
+      where: {
+        userId: usuario
+      }
+    });
     res.status(200).send({
       message: "Tienda encontradas.",
       data: stores,
@@ -38,6 +43,8 @@ export const show = async (req, res) => {
 
 export const create = async (req, res) => {
   try {
+    const {usuario} = req;
+    req.body.userId = usuario;
     const store = await Store.create(req.body);
     res.status(200).send({
       message: "Tienda creada correctamente",
@@ -46,6 +53,7 @@ export const create = async (req, res) => {
   } catch (error) {
     res.status(500).send({
       message: "Error -> servidor",
+      error: error.message
     });
   }
 };
