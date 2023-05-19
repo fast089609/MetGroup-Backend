@@ -6,11 +6,12 @@ export const create = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const register = await User.findOne({ where: { email } });
-    if (!register && register != null) {
-      res.status(400).send({
+
+    if (register != null) {
+      return res.status(400).send({
+        status: "error",
         message: "Este usuario ya existe.",
       });
-      return;
     }
 
     const newUser = await User.create({
@@ -18,7 +19,7 @@ export const create = async (req, res) => {
       email,
       password: bcrypt.hashSync(password, 10),
     });
-    res.status(200).send({
+    return res.status(200).send({
       message: "Usuario Creado correctamente",
       data: newUser,
     });
@@ -35,6 +36,7 @@ export const login = async (req, res) => {
     const user = await User.findOne({ where: { email } });
     if (!user) {
       res.status(400).send({
+        status: "error",
         message: "Usuario no encontrado",
       });
       return;
@@ -58,6 +60,7 @@ export const login = async (req, res) => {
     }
 
     res.status(401).send({
+      status: "error",
       message: "Contraseña incorrecta",
     });
   } catch (error) {
